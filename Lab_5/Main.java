@@ -5,7 +5,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-       double u0 = 0;
+       /* double u0 = 0;
         double u1 = 0;
         double [] vars = new double[2];
         
@@ -28,21 +28,22 @@ public class Main {
         for (int i = 0; i < vars.length; i++){
         	
             System.out.println("X"+i +": "+vars[i]);
-        }
+        }*/
     	
-    	
-    	/*int N = 16;
-        double [] x = {37.8,	40.6,	43.3,	46.1,	49.4,	55.6,	62.2,	67.2, 72.8,	81.7,	88.3,	95.0,	100.0,	107.8,	113.9,	121.7}; 
-        double [] y = {3.71	, 3.81,	3.86,	3.93,	3.96,	4.20,	4.34,	4.51, 4.73,	5.35,	5.74,	6.14,	6.51,	6.98,	7.44,	7.76};
+
+    	/*int N = 20;
+        double [] x = {0.0,	5.0, 10.0,	15.0,	20.0,	25.0,	30.0,	35.0, 40.0,	45.0,	50.0,	55.0,	60.0,	70.0,	75.0,	80.0, 85.0, 90.0, 95.0, 100.0}; 
+        double [] y = {1.00762, 1.00392, 1.00153, 1.00000, 0.99907, 0.99852, 0.99826, 0.99818, 0.99828, 0.99849, 0.99878, 0.99919, 0.99967, 1.00024, 1.00091, 1.00167, 1.00253, 1.00351, 1.00461, 1.00586, 1.00721};
         int m = 3;
     	
-
-        try {
-           MinSquare.MinSquare(x,y,N,m);
-        } catch (FileNotFoundException e){
-            e.printStackTrace();
-}*/
-
+        MinSquare.MinSquare(x,y,N,m);*/
+    
+    	Func func = new Func();
+    	DoubleFunc func1 = new DoubleFunc();
+    	
+    	Integrals.Trapeze(func, 0.8, 1.762, 1e-5);
+    	Integrals.Simpson(func, 0.8, 1.762, 1e-5);
+    	Integrals.CubeSimpson(func1, 0, 2.0, 0, 1.0, 1e-5);
     }
 
 
