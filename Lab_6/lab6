@@ -1,0 +1,205 @@
+h = 1;
+lam = 1.8;
+eps = 0.001;
+nMax = 1000;
+t1 = 60.;
+t2 = 40.;
+t3 = 20.;
+a1 = 10;
+a2 = 90;
+
+
+x1 = 2;
+x2 = 4;
+x3 = 5;
+x4 = 7;
+x5 = 8;
+
+i1 = IntegerPart[x1/h] + 1;
+i2 = IntegerPart[x2/h] + 1;
+i3 = IntegerPart[x3/h] + 1;
+i4 = IntegerPart[x4/h] + 1;
+i5 = IntegerPart[x5/h] + 1;
+
+y1 = 2;
+y2 = 3;
+y3 = 6;
+y4 = 8;
+y5 = 9;
+
+j1 = IntegerPart[y1/h] + 1;
+j2 = IntegerPart[y2/h] + 1;
+j3 = IntegerPart[y3/h] + 1;
+j4 = IntegerPart[y4/h] + 1;
+j5 = IntegerPart[y5/h] + 1;
+
+
+temp = Table[0, {i, i5*j5}];
+temp = Partition[temp, i5];
+
+
+For[j = 1, j <= j2, j++, temp[[j, 1]] = t1];
+For[i = 1, i <= i2, i++, temp[[j2, i]] = t1];
+
+For[j = j3, j <= j5, j++, temp[[j, i1]] = t2];
+
+For[j = 1, j <= j2, j++, temp[[j, i5]] = t3];
+
+
+deltaT = {};
+deltaMax = eps + 1.;
+kolit = 0; iter = {};
+L = {};
+
+While[(deltaMax > eps) && (kolit < nMax), deltaMax = 0.; kolit++;
+  
+  For[i = 2, i < i2, i++,
+   For[j = 1, j < j2, j++,
+    If[j == 1,
+     tmp1 = 
+      0.5*(0.5*(temp[[j, i - 1]] + temp[[j, i + 1]]) + 
+         temp[[j + 1, i]])];
+    If[(j > 1),
+     tmp1 = 
+      0.25*(temp[[j, i - 1]] + temp[[j, i + 1]] + temp[[j - 1, i]] + 
+         temp[[j + 1, i]])];
+    delta = lam*(tmp1 - temp[[j, i]]);
+    temp[[j, i]] = temp[[j, i]] + delta;
+    deltaAbs = Abs[delta];
+    If[deltaAbs > deltaMax, deltaMax = deltaAbs];]];
+  
+  
+  For[i = i2, i <= i5, i++,
+   For[j = 1, j <= j5, j++,
+    
+    If[(i == i3) && (j > j1) && (j < j4), 
+      tmp1 = (a1*temp[[j, i - 1]] + 
+         a2*temp[[j, 
+           i + 1]] + ((a1 + a2)/2)*(temp[[j - 1, i]] + 
+            temp[[j + 1, i]]))/(2*(a1 + a2))];
+    If[(j == j4) && (i > i3) && (i < i4), 
+     tmp1 = (((a1 + a2)/2)*(temp[[j, i - 1]] + temp[[j, i + 1]]) + 
+         a2*temp[[j - 1, i]] + a1*temp[[j + 1, i]])/(2*(a1 + a2))];
+    If[(i == i4) && (j > j1) && (j < j4), 
+     tmp1 = (a2*temp[[j, i - 1]] + 
+         a1*
+          temp[[j, 
+           i + 1]] + ((a1 + a2)/2)*(temp[[j - 1, i]] + 
+            temp[[j + 1, i]]))/(2*(a1 + a2))];
+    If[(j == j1) && (i > i3) && (i < i4), 
+     tmp1 = (((a1 + a2)/2)*(temp[[j, i - 1]] + temp[[j, i + 1]]) + 
+         a1*temp[[j - 1, i]] + a2*temp[[j + 1, i]])/(2*(a1 + a2))];
+    (*углы*)
+    If[(i == i3) && (j == j1), 
+     tmp1 = (((a1 + a2)/2)*(temp[[j, i + 1]] + temp[[j + 1, i]]) + 
+         a1*temp[[j, i - 1]] + a1*temp[[j - 1, i]])/(3*a1 + a2)];
+    If[(i == i3) && (j == j4), 
+     tmp1 = (((a1 + a2)/2)*(temp[[j - 1, i]] + temp[[j, i + 1]]) + 
+         a1*temp[[j, i - 1]] + a1*temp[[j + 1, i]])/(3*a1 + a2)];
+    If[(i == i4) && (j == j1),
+     tmp1 = (((a1 + a2)/2)*(temp[[j, i - 1]] + temp[[j + 1, i]]) + 
+         a1*temp[[j, i + 1]] + a1*temp[[j - 1, i]])/(3*a1 + a2)];
+    If[(i == i4) && (j == j4),
+     tmp1 = (((a1 + a2)/2)*(temp[[j, i - 1]] + temp[[j - 1, i]]) + 
+         a1*temp[[j + 1, i]] + a1*temp[[j, i + 1]])/(3*a1 + a2)];
+    
+    
+    If[j == j5 && i < i5,
+     tmp1 = 
+      0.5*(0.5*(temp[[j, i - 1]] + temp[[j, i + 1]]) + 
+         temp[[j - 1, i]])];
+    If[i == i5 && j < j5 && j > j2,
+     tmp1 = 
+      0.5*(temp[[j, i - 1]] + 
+         0.5*(temp[[j - 1, i]] + temp[[j + 1, i]]))];
+    If[i == i5 && j == j5,
+     tmp1 = 0.5 (temp[[j - 1, i]] + temp[[j, i - 1]])];
+    
+    If[i == i2 && j == j3 ,
+     tmp1 = (0.5*(temp[[j, i - 1]] + temp[[j - 1, i]]) + 
+         temp[[j, i + 1]] + temp[[j + 1, i]])/3];
+    
+    If[i == i2 && j < j3 && j > j2 ,
+     tmp1 = 
+      0.5*(0.5*(temp[[j - 1, i]] + temp[[j + 1, i]]) + 
+         temp[[j, i + 1]])];
+    
+    If[j == 1  && i < i5,
+     tmp1 = 
+      0.5*(0.5*(temp[[j, i - 1]] + temp[[j, i + 1]]) + 
+         temp[[j + 1, i]])];
+    
+    
+    If[! (i == i3 && j >= j1 && j <= j4) && ! (j == j4 && i > i3 && 
+         i <= i4) && ! (i == i4 && j < j4 && j >= j1) && ! (j == j1 && 
+         i < i4 && i > i3) &&  j < j5 && j > 1 && 
+      i < i5 && ! (i == i2 && j >= j2 && j <= j3),
+     tmp1 = 
+      0.25*(temp[[j, i - 1]] + temp[[j, i + 1]] + temp[[j - 1, i]] + 
+         temp[[j + 1, i]])];
+    
+    
+    If[! (j == j2 && i == i2) && ! (i == i5 && j <= j2),
+     delta = lam*(tmp1 - temp[[j, i]]);
+     temp[[j, i]] = temp[[j, i]] + delta;
+     deltaAbs = Abs[delta];];
+    If[deltaAbs > deltaMax, deltaMax = deltaAbs];]];
+  
+  
+  
+  For[i = i1 + 1, i < i2, i++,
+   For[j = j3, j <= j5, j++,
+    If[j == j3,
+     tmp1 = 
+      0.5*(0.5*(temp[[j, i - 1]] + temp[[j, i + 1]]) + 
+         temp[[j + 1, i]])];
+    If[j == j5,
+     tmp1 = 
+      0.5*(0.5*(temp[[j, i - 1]] + temp[[j, i + 1]]) + 
+         temp[[j - 1, i]])];
+    If[j > j3 && j < j5,
+     tmp1 = 
+      0.25*(temp[[j, i - 1]] + temp[[j, i + 1]] + temp[[j - 1, i]] + 
+         temp[[j + 1, i]])];
+    
+    delta = lam*(tmp1 - temp[[j, i]]);
+    temp[[j, i]] = temp[[j, i]] + delta;
+    deltaAbs = Abs[delta];
+    If[deltaAbs > deltaMax, deltaMax = deltaAbs];]];
+  
+  
+  deltaT = Append[deltaT, deltaMax];
+  Print[" >>>>> Nom. it=", kolit, "  deltaMax=", deltaMax];];
+
+
+
+
+ListPlot3D[temp]  
+
+ListPlot[deltaT]
+
+
+f1 = temp[[j2, i2]] - temp[[j2, i2 + 1]] + 
+   0.5*(temp[[1, 1]] - temp[[1, 2]] + temp[[j2, i2]] - 
+      temp[[j2 + 1, i2]]);
+For[j = 2, j < j2, j++,
+  f1 = f1 + (temp[[j, 1]] - temp[[j, 2]])];
+For[i = 1, i <= i2, i++,
+  f1 = f1 + (temp[[j2, i]] - temp[[j2 - 1, i]])];
+
+
+f2 = 0.5*(temp[[j3, i1]] - temp[[j3, i1 + 1]] + temp[[j5, i1]] - 
+     temp[[j5, i1 + 1]]);
+For[j = j3 + 1, j < j5, j++,
+  f2 = f2 + (temp[[j, i1]] - temp[[j, i1 + 1]])];
+
+
+f3 = 0.5*(temp[[1, i5]] - temp[[1, i5 - 1]] + temp[[j2, i5]] - 
+     temp[[j2 + 1, i5]]);
+For[j = 2, j <= j2, j++,
+  f3 = f3 + (temp[[j, i5]] - temp[[j, i5 - 1]])];
+
+
+kons = Abs[f1 + f2 + f3]/(Abs[f1] + Abs[f2] + Abs[f3]);
+Print["   f1=", f1, "  f2=", f2, "  f3=", f3, "  kons=", kons];
+MatrixForm[Transpose[temp]]
